@@ -37,7 +37,7 @@ class Hash {
                 h = (h ^ part) * Hash.STEP_MAGIC_N;
                 tmpValue >>= 32n;
             }
-            return Number(h >>> 0n);
+            return Number(h) >>> 0;
         }
 
         let h = Hash.BASE_MAGIC;

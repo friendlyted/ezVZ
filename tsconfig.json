@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "lib": ["ES2020", "dom"]
+    "lib": ["ES2020", "dom"],
+    "target": "ES2020"
   }
 }
