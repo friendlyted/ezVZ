@@ -1,29 +1,33 @@
-import {TemplateAnalyzer, TemplateAnalyzeResult, TextChunk} from "../CommonInterfaces.ts";
-import {ConstTextChunk, FunctionTextChunk, VariableTextChunk} from "./TextChunk.ts";
-import {NodeUpdaterDefinition} from "./NodeUpdater.ts";
+import {NodeUpdaterDefinition} from "../component/definition/NodeUpdaterDefinition.ts";
+import {InputDefinition} from "../component/definition/InputDefinition.ts";
+import {TemplateAnalyzeResult} from "./TemplateAnalyzeResult.ts";
+import {BackRefDefinition} from "../component/definition/BackRefDefinition.ts";
+import {SubComponentDefinition} from "../component/definition/SubComponentDefinition.ts";
 import {VariableParser} from "./VariableParser.ts";
-import {InputDefinition} from "./Input.ts";
-import {SubDefinition} from "./Sub.ts";
-import {BackrefDefinition} from "./Backref.ts";
+import {ConstTextChunk, FunctionTextChunk, TextChunk, VariableTextChunk} from "../component/TextChunk.ts";
+import {ComponentDefinitionRegister} from "../component/definition/ComponentDefinitionRegister.ts";
 
-
-export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
+export class TemplateAnalyzer {
     private static readonly BINDING_PATTERN = /\{\{.+}}/;
+    private readonly componentRegister: ComponentDefinitionRegister;
+
+    constructor(componentRegister: ComponentDefinitionRegister) {
+        this.componentRegister = componentRegister;
+    }
 
     public analyzeNode(element: Element, currentPath: number[] = []): TemplateAnalyzeResult {
         const nodeUpdaters: NodeUpdaterDefinition[] = [];
         const nodeInputs: InputDefinition[] = [];
-        const nodeSubs: SubDefinition[] = [];
-        const backrefs: BackrefDefinition[] = [];
+        const nodeSubs: SubComponentDefinition[] = [];
+        const backrefs: BackRefDefinition[] = [];
         const result = {nodeUpdaters, nodeInputs, nodeSubs, backrefs};
 
         if (element.localName.startsWith("ftd:")) {
             let name = element.localName.substring(4);
-            const sub = new SubDefinition(
+            const sub = new SubComponentDefinition(
                 currentPath,
                 name,
-                element.getAttribute("data"),
-                false
+                this.componentRegister
             );
             nodeSubs.push(sub);
             return result;
@@ -53,7 +57,7 @@ export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
 
     public analyzeTextNode(textNode: Text, currentPath: number[]): NodeUpdaterDefinition {
         let value = textNode.textContent;
-        if (!value.match(DefaultTemplateAnalyzer.BINDING_PATTERN)) return null;
+        if (!value.match(TemplateAnalyzer.BINDING_PATTERN)) return null;
 
         const [textChunks, variables] = this.analyzeValuedText(value);
 
@@ -63,8 +67,8 @@ export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
     public analyzeAttributes(element: Element, currentPath: number[]): TemplateAnalyzeResult {
         const nodeUpdaters: NodeUpdaterDefinition[] = [];
         const nodeInputs: InputDefinition[] = [];
-        const nodeSubs: SubDefinition[] = [];
-        const backrefs: BackrefDefinition[] = [];
+        const nodeSubs: SubComponentDefinition[] = [];
+        const backrefs: BackRefDefinition[] = [];
         const result = {nodeUpdaters, nodeInputs, nodeSubs, backrefs};
 
         let attrs = element.attributes;
@@ -85,18 +89,8 @@ export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
                 } else if (attr.name === "ftd:mousewheelTarget".toLowerCase()) {
                     eventType = "mousewheel";
                 } else {
-                    if (attr.name === "ftd:list") {
-                        const templateName = attr.textContent;
-                        const data = element.getAttribute("ftd:data");
-                        const sub = new SubDefinition(
-                            currentPath,
-                            templateName,
-                            data,
-                            true
-                        );
-                        nodeSubs.push(sub);
-                    } else if (attr.name === "ftd:backref") {
-                        backrefs.push(new BackrefDefinition(currentPath, attr.value));
+                    if (attr.name === "ftd:backref") {
+                        backrefs.push(new BackRefDefinition(currentPath, attr.value));
                     }
                     continue;
                 }
@@ -115,7 +109,7 @@ export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
         const name = attr.localName;
         const value = attr.value;
 
-        if (!value.match(DefaultTemplateAnalyzer.BINDING_PATTERN)) return null;
+        if (!value.match(TemplateAnalyzer.BINDING_PATTERN)) return null;
 
         const [textChunks, triggeredBy] = this.analyzeValuedText(value);
         return new NodeUpdaterDefinition(currentPath, textChunks, triggeredBy, name);
@@ -130,7 +124,7 @@ export class DefaultTemplateAnalyzer implements TemplateAnalyzer {
                 triggeredBy.push(varName);
                 return new VariableTextChunk(varName)
             },
-            (fnName, fnParams)=>{
+            (fnName, fnParams) => {
                 triggeredBy.push(...fnParams);
                 return new FunctionTextChunk(fnName, fnParams);
             }

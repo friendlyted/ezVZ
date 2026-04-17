@@ -1,4 +1,8 @@
-import {DataBindingProvider, TextChunk} from "../CommonInterfaces.ts";
+import {ObjectBindings} from "../binding/ObjectBindings.ts";
+
+export interface TextChunk {
+    getValue(bindings: ObjectBindings<never>): string;
+}
 
 export class ConstTextChunk implements TextChunk {
     private readonly value: string;
@@ -7,7 +11,7 @@ export class ConstTextChunk implements TextChunk {
         this.value = value;
     }
 
-    getValue(): string {
+    getValue(bindings: ObjectBindings<never>): string {
         return this.value;
     }
 }
@@ -19,8 +23,8 @@ export class VariableTextChunk implements TextChunk {
         this.varName = varName;
     }
 
-    getValue(binding: DataBindingProvider): string {
-        return binding.get(this.varName).getValue();
+    getValue(bindings: ObjectBindings<never>): string {
+        return bindings.get(this.varName).getValue();
     }
 }
 
@@ -32,14 +36,13 @@ export class FunctionTextChunk implements TextChunk {
     ) {
     }
 
-    getValue(binding: DataBindingProvider): string {
-        const fn = binding.get(this.fnName).getValue();
+    getValue(bindings: ObjectBindings<never>): string {
+        const fn = bindings.get(this.fnName).getValue();
         if (typeof fn !== "function") {
             throw Error("Binding '" + this.fnName + "' is not a function");
         }
 
-        const args = this.fnParams.map(p => binding.get(p).getValue());
-        let result = fn(...args);
-        return result;
+        const args = this.fnParams.map(p => bindings.get(p).getValue());
+        return fn(...args);
     }
 }

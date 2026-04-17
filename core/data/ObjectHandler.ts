@@ -1,6 +1,7 @@
-import {AttributeListener, AttrKey, ListenerRegistration, RichObject} from "../CommonInterfaces.ts";
 import {createArray} from "./ArrayHandler.ts";
 import {equals, hash} from "./Utils.ts";
+import {AttributeListener, AttrKey, RichObject} from "./RichObject.ts";
+import {Destroyable} from "../component/instance/Destroyable.ts";
 
 export function createRichVoid() {
     return createObject({});
@@ -74,7 +75,7 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
     }
 
     addFieldListener(target: T) {
-        return (attributeName: keyof T, listener: AttributeListener): ListenerRegistration => {
+        return (attributeName: keyof T, listener: AttributeListener): Destroyable => {
             if (!this.attributeListeners.has(attributeName)) {
                 this.attributeListeners.set(attributeName, []);
             }

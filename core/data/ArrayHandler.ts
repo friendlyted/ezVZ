@@ -1,5 +1,5 @@
-import {DeleteListener, InsertListener, ReplaceListener, RichArray, RichObject} from "../CommonInterfaces.ts";
 import {hash} from "./Utils.ts";
+import {DeleteListener, InsertListener, ReplaceListener, RichArray} from "./RichArray.ts";
 
 type AttrKey = string | number | symbol;
 

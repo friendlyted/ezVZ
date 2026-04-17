@@ -1,7 +1,7 @@
 import {Component, ComponentInstance, ComponentModel, RichObject} from "../CommonInterfaces.ts";
-import {DefaultComponentDefinition} from "../componentDefinition/Component.ts";
+import {DefaultComponentDefinition} from "../componentDefinition/ComponentInstance.ts";
 import {DefaultComponentRegister} from "../componentDefinition/DefaultComponentRegister.ts";
-import {DefaultDataBinding, DefaultDataBindingProvider} from "../data/DataBinding.ts";
+import {DefaultDataBinding, DefaultDataBindingProvider} from "../data/FieldBinding.ts";
 
 const TEMPLATE = `
     <div id="testBlock"><h1>Test Component</h1></div>

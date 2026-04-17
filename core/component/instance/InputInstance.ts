@@ -1,31 +1,12 @@
-import {DataBinding, DataBindingProvider, Destroyable} from "../CommonInterfaces.ts";
-
-export class InputDefinition {
-    private readonly nodePath: number[];
-    private readonly eventType: string;
-    private readonly bindingName: string;
-
-    constructor(nodePath: number[], eventType: string, bindingName: string) {
-        this.nodePath = nodePath;
-        this.eventType = eventType;
-        this.bindingName = bindingName;
-    }
-
-    createInstance(instanceRoot: Element, bindingProvider: DataBindingProvider): InputInstance {
-        let targetNode: Node = instanceRoot;
-        for (let i = 0; i < this.nodePath.length; i++) {
-            targetNode = targetNode.childNodes.item(this.nodePath[i]);
-        }
-        return new InputInstance(targetNode, this.eventType, bindingProvider.get(this.bindingName));
-    }
-}
+import {Destroyable} from "./Destroyable.ts";
+import {FieldBinding} from "../../binding/FieldBinding.ts";
 
 export class InputInstance implements Destroyable {
     private readonly targetNode: Node;
     private readonly eventType: string;
     private readonly listener: (event: Event) => void;
 
-    constructor(targetNode: Node, eventType: string, binding: DataBinding) {
+    constructor(targetNode: Node, eventType: string, binding: FieldBinding) {
         this.targetNode = targetNode;
         this.eventType = eventType;
         this.listener = event => {

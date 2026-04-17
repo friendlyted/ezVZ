@@ -1,9 +1,10 @@
-import {DataBindingProvider, Destroyable} from "../CommonInterfaces.ts";
+import {ObjectBindings} from "../../binding/ObjectBindings.ts";
+import {BackRefInstance} from "../instance/BackRefInstance.ts";
 
 /**
  * Обеспечивает связь вложенных компонент из тегов с переменной модели.
  */
-export class BackrefDefinition {
+export class BackRefDefinition {
     private readonly nodePath: number[];
     private readonly bindingName: string;
 
@@ -12,13 +13,12 @@ export class BackrefDefinition {
         this.bindingName = bindingName;
     }
 
-    createInstance(instanceRoot: Element, binding: DataBindingProvider): Destroyable {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): BackRefInstance {
         let targetNode: Element = instanceRoot;
         for (let i = 0; i < this.nodePath.length; i++) {
             targetNode = targetNode.childNodes.item(this.nodePath[i]) as Element;
         }
-        binding.get(this.bindingName).setValue(targetNode);
-        return {destroy: () => binding.get(this.bindingName).setValue(null)};
+        let fieldBinding = bindings.get(this.bindingName);
+        return new BackRefInstance(fieldBinding, targetNode);
     }
-
 }
