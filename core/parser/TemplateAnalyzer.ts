@@ -22,11 +22,18 @@ export class TemplateAnalyzer {
         const backrefs: BackRefDefinition[] = [];
         const result = {nodeUpdaters, nodeInputs, nodeSubs, backrefs};
 
-        if (element.localName.startsWith("ftd:")) {
-            let name = element.localName.substring(4);
+        if (element.localName === ("ftd:include")) {
+            let bindingName =
+                element.getAttribute("ftd:data") ||
+                element.getAttribute("data");
+
+            if (bindingName == null) {
+                throw new Error("ftd sub component must have ftd:data attribute")
+            }
+
             const sub = new SubComponentDefinition(
                 currentPath,
-                name,
+                bindingName,
                 this.componentRegister
             );
             nodeSubs.push(sub);
@@ -74,25 +81,41 @@ export class TemplateAnalyzer {
         let attrs = element.attributes;
         for (let i = 0; i < attrs?.length; i++) {
             const attr = attrs.item(i);
-            if (attr.name.startsWith("ftd:")) {
+            let name = attr.name;
+
+            if (name.startsWith("ftd:")) {
+                if (name === "ftd:backref") {
+                    backrefs.push(new BackRefDefinition(currentPath, attr.value));
+                    continue;
+                }
+
+                if (name === "ftd:list_data") {
+                    let bindingName = attr.value;
+                    const sub = new SubComponentDefinition(
+                        currentPath,
+                        bindingName,
+                        this.componentRegister
+                    );
+                    nodeSubs.push(sub);
+                    continue;
+                }
+
+
                 let eventType: string;
-                if (attr.name === "ftd:pressTarget".toLowerCase()) {
+                if (name === "ftd:pressTarget".toLowerCase()) {
                     eventType = "keydown";
-                } else if (attr.name === "ftd:changeTarget".toLowerCase()) {
+                } else if (name === "ftd:changeTarget".toLowerCase()) {
                     eventType = "input";
-                } else if (attr.name === "ftd:mousemoveTarget".toLowerCase()) {
+                } else if (name === "ftd:mousemoveTarget".toLowerCase()) {
                     eventType = "mousemove";
-                } else if (attr.name === "ftd:mousedownTarget".toLowerCase()) {
+                } else if (name === "ftd:mousedownTarget".toLowerCase()) {
                     eventType = "mousedown";
-                } else if (attr.name === "ftd:mouseupTarget".toLowerCase()) {
+                } else if (name === "ftd:mouseupTarget".toLowerCase()) {
                     eventType = "mouseup";
-                } else if (attr.name === "ftd:mousewheelTarget".toLowerCase()) {
+                } else if (name === "ftd:mousewheelTarget".toLowerCase()) {
                     eventType = "mousewheel";
                 } else {
-                    if (attr.name === "ftd:backref") {
-                        backrefs.push(new BackRefDefinition(currentPath, attr.value));
-                    }
-                    continue;
+                    throw new Error(`Unsupported ftd attribute: ${name}`);
                 }
 
                 const input = new InputDefinition(currentPath, eventType, attr.value);

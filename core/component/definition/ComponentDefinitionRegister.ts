@@ -11,7 +11,7 @@ export class ComponentDefinitionRegister {
         this.analyzer = new TemplateAnalyzer(this);
     }
 
-    register(model: ComponentModel, template: string, svg: boolean = false) {
+    register(modelName: string, template: string, svg: boolean = false) {
         let templateRoot: Element;
         if (svg) {
             templateRoot = ComponentDefinitionRegister.parseSvg(template);
@@ -23,11 +23,11 @@ export class ComponentDefinitionRegister {
             templateRoot,
             templateInfo
         );
-        this.components.set(model.modelName(), componentDefinition);
+        this.components.set(modelName, componentDefinition);
     }
 
     getComponent(model: ComponentModel): ComponentDefinition {
-        return this.components.get(model.modelName());
+        return this.components.get(model?.modelName?.());
     }
 
     private static parseSvg(content: string) {

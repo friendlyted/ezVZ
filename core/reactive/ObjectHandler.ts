@@ -1,13 +1,13 @@
-import {createArray} from "./ArrayHandler.ts";
+import {reactiveArray} from "./ArrayHandler.ts";
 import {equals, hash} from "./Utils.ts";
-import {AttributeListener, AttrKey, RichObject} from "./RichObject.ts";
+import {AttributeListener, AttrKey, ReactiveObject} from "./ReactiveObject.ts";
 import {Destroyable} from "../component/instance/Destroyable.ts";
 
-export function createRichVoid() {
-    return createObject({});
+export function createReactiveVoid() {
+    return reactiveObject({});
 }
 
-export function createObject<T extends object>(source?: T, rawFields: (keyof T)[] = []): T & RichObject<T> {
+export function reactiveObject<T extends object>(source?: T, rawFields: (keyof T)[] = []): T & ReactiveObject<T> {
     return ObjectHandler.create<T>(source, rawFields);
 }
 
@@ -16,12 +16,12 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
     private readonly attributeListeners = new Map<AttrKey, AttributeListener[]>();
     private readonly rawFields: (keyof T)[];
 
-    static create<T extends object>(source?: T, rawFields: (keyof T)[] = []): T & RichObject<T> {
+    static create<T extends object>(source?: T, rawFields: (keyof T)[] = []): T & ReactiveObject<T> {
         if ((source as any)?.$__isManaged?.()) {
-            return source as T & RichObject<T>;
+            return source as T & ReactiveObject<T>;
         }
         const target = {} as T;
-        return new Proxy(target, new ObjectHandler<T>(source, target, rawFields)) as T & RichObject<T>;
+        return new Proxy(target, new ObjectHandler<T>(source, target, rawFields)) as T & ReactiveObject<T>;
     }
 
     private constructor(source: T, target: T, rawFields?: (keyof T)[]) {
@@ -101,7 +101,12 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
     merge(target: T) {
         return (other: T) => {
             if (!other) other = {} as T;
-            const otherKeys = [...Object.getOwnPropertyNames(other), ...Object.getOwnPropertySymbols(other)];
+            const otherKeys = [
+                ...Object.getOwnPropertyNames(other),
+                ...Object.getOwnPropertySymbols(other),
+                ...Object.getOwnPropertyNames(Object.getPrototypeOf(other)),
+                ...Object.getOwnPropertySymbols(Object.getPrototypeOf(other))
+            ];
             for (const key of otherKeys) {
                 let value1 = target[key];
                 let value2 = other[key];
@@ -117,9 +122,9 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
                         value1.$__merge(value2);
                     } else {
                         if (value2 instanceof Array) {
-                            this.set(target, key, createArray(value2));
+                            this.set(target, key, reactiveArray(value2));
                         } else {
-                            this.set(target, key, createObject(value2));
+                            this.set(target, key, reactiveObject(value2));
                         }
                     }
                 } else {

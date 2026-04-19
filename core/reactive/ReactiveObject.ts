@@ -6,7 +6,7 @@ export interface AttributeListener {
     (name: AttrKey, oldValue: any): void
 }
 
-export interface RichObject<T> {
+export interface ReactiveObject<T> {
     $__addFieldListener(attributeName: keyof T, listener: AttributeListener): Destroyable;
 
     $__removeFieldListener(attributeName: keyof T, listener: AttributeListener): void;

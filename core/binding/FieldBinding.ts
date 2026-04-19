@@ -1,4 +1,4 @@
-import {RichObject} from "../data/RichObject.ts";
+import {ReactiveObject} from "../reactive/ReactiveObject.ts";
 import {Destroyable} from "../component/instance/Destroyable.ts";
 
 export interface ChangeCallback {
@@ -6,10 +6,10 @@ export interface ChangeCallback {
 }
 
 export class FieldBinding {
-    private readonly object: RichObject<unknown>;
+    private readonly object: ReactiveObject<unknown>;
     private readonly field: any;
 
-    private constructor(object: RichObject<unknown>, field: any) {
+    private constructor(object: ReactiveObject<unknown>, field: any) {
         this.object = object;
         this.field = field;
     }
@@ -26,7 +26,7 @@ export class FieldBinding {
         (this.object as any)[this.field] = value;
     }
 
-    static create<T extends RichObject<T>>(object: T, field: keyof T): FieldBinding {
+    static create<T extends ReactiveObject<T>>(object: T, field: keyof T): FieldBinding {
         return new FieldBinding(object, field);
     }
 }

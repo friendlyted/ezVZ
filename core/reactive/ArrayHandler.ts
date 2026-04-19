@@ -1,9 +1,9 @@
 import {hash} from "./Utils.ts";
-import {DeleteListener, InsertListener, ReplaceListener, RichArray} from "./RichArray.ts";
+import {DeleteListener, InsertListener, ReactiveArray, ReplaceListener} from "./ReactiveArray.ts";
 
 type AttrKey = string | number | symbol;
 
-export function createArray<T extends object>(source?: T[]): T[] & RichArray<T> {
+export function reactiveArray<T extends object>(source?: T[]): T[] & ReactiveArray<T> {
     return ArrayHandler.create<T>(source);
 }
 
@@ -12,12 +12,12 @@ export class ArrayHandler<T> implements ProxyHandler<T[]> {
     private readonly insertListeners: InsertListener<T>[];
     private readonly deleteListeners: DeleteListener[];
 
-    static create<T>(source?: T[]): RichArray<T> {
+    static create<T>(source?: T[]): ReactiveArray<T> {
         if ((source as any)?.$__isManaged?.()) {
-            return source as RichArray<T>;
+            return source as ReactiveArray<T>;
         }
         if (source === undefined) source = [];
-        return new Proxy([...source], new ArrayHandler<T>()) as RichArray<T>;
+        return new Proxy([...source], new ArrayHandler<T>()) as ReactiveArray<T>;
     }
 
     private constructor() {

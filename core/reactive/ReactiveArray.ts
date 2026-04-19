@@ -12,7 +12,7 @@ export interface ReplaceListener {
     (oldIndex: number, newIndex: number): void
 }
 
-export interface RichArray<T> extends Array<T> {
+export interface ReactiveArray<T> extends Array<T> {
     $__addInsertListener(l: InsertListener<T>): Destroyable;
 
     $__addDeleteListener(l: DeleteListener): Destroyable;

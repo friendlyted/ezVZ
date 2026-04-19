@@ -1,7 +1,7 @@
 import {FieldBinding} from "./FieldBinding.ts";
-import {RichObject} from "../data/RichObject.ts";
+import {ReactiveObject} from "../reactive/ReactiveObject.ts";
 
-export class ObjectBindings<T extends RichObject<T>> {
+export class ObjectBindings<T extends ReactiveObject<T>> {
     bindings: Map<string, FieldBinding> = new Map();
 
     private constructor(...values: (readonly [string, FieldBinding])[]) {
@@ -17,21 +17,21 @@ export class ObjectBindings<T extends RichObject<T>> {
         return this.bindings.get(name);
     }
 
-    static selectedFields<T extends RichObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings<T> {
+    static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings<T> {
         const bindings = keys.map(key =>
             [String(key), FieldBinding.create<T>(data, key)] as const
         );
         return new ObjectBindings<T>(...bindings);
     }
 
-    static allFields<T extends RichObject<T>>(data: T): ObjectBindings<T> {
+    static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings<T> {
         const bindings = Object.keys(data).map(key =>
             [String(key), FieldBinding.create<T>(data, key as keyof T)] as const
         );
         return new ObjectBindings<T>(...bindings);
     }
 
-    static custom<T extends RichObject<T>>(
+    static custom<T extends ReactiveObject<T>>(
         data: T,
         ...bindingProviders: (readonly [keyof T, (data: T, F: keyof T) => FieldBinding])[]
     ): ObjectBindings<T> {

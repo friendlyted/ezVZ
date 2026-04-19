@@ -1,6 +1,6 @@
 import {Destroyable} from "./Destroyable.ts";
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
-import {RichObject} from "../../data/RichObject.ts";
+import {ReactiveObject} from "../../reactive/ReactiveObject.ts";
 import {TextChunk} from "../TextChunk.ts";
 
 export class NodeUpdaterInstance implements Destroyable {
@@ -12,13 +12,13 @@ export class NodeUpdaterInstance implements Destroyable {
     // не надо планировать обновление несколько раз
     private updateScheduled = false;
 
-    public constructor(targetNode: Node, binding: ObjectBindings<never>, textChunks: TextChunk[], triggeredBy: string[]) {
+    public constructor(targetNode: Node, bindings: ObjectBindings<never>, textChunks: TextChunk[], triggeredBy: string[]) {
         this.targetNode = targetNode;
-        this.binding = binding;
+        this.binding = bindings;
         this.textChunks = textChunks;
 
         for (let varName of triggeredBy) {
-            const listenerRegistration = binding.get(varName).addChangeListener(() => this.scheduleUpdate());
+            const listenerRegistration = bindings.get(varName).addChangeListener(() => this.scheduleUpdate());
             this.dependencies.push(listenerRegistration);
             this.scheduleUpdate();
         }

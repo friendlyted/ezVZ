@@ -2,7 +2,7 @@ import {TemplateAnalyzeResult} from "../../parser/TemplateAnalyzeResult.ts";
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
 import {Destroyable} from "../instance/Destroyable.ts";
 import {ComponentInstance} from "../instance/ComponentInstance.ts";
-import {RichObject} from "../../data/RichObject.ts";
+import {ReactiveObject} from "../../reactive/ReactiveObject.ts";
 
 export class ComponentDefinition {
     private readonly templateRoot: Element;
@@ -23,7 +23,11 @@ export class ComponentDefinition {
         this.cleanupAttributes(this.templateRoot);
         const elements = Array.from(this.templateRoot.querySelectorAll("*"));
         for (const el of elements) {
-            this.cleanupAttributes(el);
+            if(el.localName === ("ftd")){
+                el.remove();
+            } else {
+                this.cleanupAttributes(el);
+            }
         }
     }
 
@@ -36,7 +40,7 @@ export class ComponentDefinition {
         }
     }
 
-    createInstance<T extends RichObject<T>>(bindings: ObjectBindings<T>, resources: Destroyable[] = []): ComponentInstance {
+    createInstance<T extends ReactiveObject<T>>(bindings: ObjectBindings<T>, resources: Destroyable[] = []): ComponentInstance {
         const instanceRoot = this.templateRoot.cloneNode(true) as Element;
 
         const updaters = this.templateInfo.nodeUpdaters
