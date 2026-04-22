@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>TypeScript</title>
+    <style>
+        html, body, #app {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="menu"></div>
+<script type="module">
+    import {ezTsImport} from "../../ezTS/loader/front.js";
+
+    ezTsImport({
+        webWorker: "./web-worker.js",
+        serviceWorker: "./service-worker.js",
+        entryPointFiles: [
+            "./menu/_index.ts"
+        ]
+    }).then(async (modules) => {
+        await Promise.all(modules.map(m => m.main()));
+        console.log("All modules were loaded");
+    });
+</script>
+</body>
+</html>
+
