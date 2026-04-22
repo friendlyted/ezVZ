@@ -1,1 +1,0 @@
-importScripts("../../ezTS/loader/service-worker.js");
