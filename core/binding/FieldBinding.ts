@@ -15,6 +15,9 @@ export class FieldBinding {
     }
 
     addChangeListener(callback: ChangeCallback): Destroyable {
+        if (this.object === null || typeof (this.object) === "undefined") {
+            throw new Error("Cannot attach change listener to a null value")
+        }
         return this.object.$__addFieldListener(this.field as never, callback);
     }
 
@@ -27,6 +30,9 @@ export class FieldBinding {
     }
 
     static create<T extends ReactiveObject<T>>(object: T, field: keyof T): FieldBinding {
+        if (!object?.$__isManaged?.()) {
+            throw new Error("Object cannot be used in a field binding");
+        }
         return new FieldBinding(object, field);
     }
 }
