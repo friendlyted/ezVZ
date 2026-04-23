@@ -8,6 +8,21 @@ import {ConstTextChunk, FunctionTextChunk, TextChunk, VariableTextChunk} from ".
 import {ComponentDefinitionRegister} from "../component/definition/ComponentDefinitionRegister.ts";
 
 export class TemplateAnalyzer {
+    private static MOUSE_EVENTS = [
+        "click", "dblclick", "mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave"
+    ];
+    private static KB_EVENTS = [
+        "keydown", "keyup", "keypress"
+    ];
+    private static TOUCH_EVENTS = [
+        "touchstart", "touchend", "touchmove", "touchcancel"
+    ];
+    private static EVENTS = [
+        ...TemplateAnalyzer.MOUSE_EVENTS,
+        ...TemplateAnalyzer.KB_EVENTS,
+        ...TemplateAnalyzer.TOUCH_EVENTS
+    ];
+
     private static readonly BINDING_PATTERN = /\{\{.+}}/;
     private readonly componentRegister: ComponentDefinitionRegister;
 
@@ -83,47 +98,37 @@ export class TemplateAnalyzer {
             const attr = attrs.item(i);
             let name = attr.name;
 
-            if (name.startsWith("ftd:")) {
-                if (name === "ftd:backref") {
-                    backrefs.push(new BackRefDefinition(currentPath, attr.value));
-                    continue;
-                }
-
-                if (name === "ftd:list_data") {
-                    let bindingName = attr.value;
-                    const sub = new SubComponentDefinition(
-                        currentPath,
-                        bindingName,
-                        this.componentRegister
-                    );
-                    nodeSubs.push(sub);
-                    continue;
-                }
-
-
-                let eventType: string;
-                if (name === "ftd:pressTarget".toLowerCase()) {
-                    eventType = "keydown";
-                } else if (name === "ftd:changeTarget".toLowerCase()) {
-                    eventType = "input";
-                } else if (name === "ftd:mousemoveTarget".toLowerCase()) {
-                    eventType = "mousemove";
-                } else if (name === "ftd:mousedownTarget".toLowerCase()) {
-                    eventType = "mousedown";
-                } else if (name === "ftd:mouseupTarget".toLowerCase()) {
-                    eventType = "mouseup";
-                } else if (name === "ftd:mousewheelTarget".toLowerCase()) {
-                    eventType = "mousewheel";
-                } else {
-                    throw new Error(`Unsupported ftd attribute: ${name}`);
-                }
-
-                const input = new InputDefinition(currentPath, eventType, attr.value);
-                nodeInputs.push(input);
+            if (!name.startsWith("ftd:")) {
+                const updater = this.analyzeAttribute(attr, currentPath);
+                if (updater) nodeUpdaters.push(updater);
+                continue;
             }
 
-            const updater = this.analyzeAttribute(attr, currentPath);
-            if (updater) nodeUpdaters.push(updater);
+            const ftdName = name.substring(4).toLowerCase();
+
+            if (ftdName === "backref") {
+                backrefs.push(new BackRefDefinition(currentPath, attr.value));
+                continue;
+            }
+
+            if (ftdName === "list_data") {
+                let bindingName = attr.value;
+                const sub = new SubComponentDefinition(
+                    currentPath,
+                    bindingName,
+                    this.componentRegister
+                );
+                nodeSubs.push(sub);
+                continue;
+            }
+
+            if (TemplateAnalyzer.EVENTS.includes(ftdName)) {
+                const input = new InputDefinition(currentPath, ftdName, attr.value);
+                nodeInputs.push(input);
+                continue;
+            }
+
+            throw new Error(`Unsupported ftd attribute: ${name}`);
         }
         return result;
     }
