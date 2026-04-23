@@ -22,7 +22,14 @@ export class FieldBinding {
     }
 
     getValue(): any {
-        return this.object[this.field];
+        let field = this.object[this.field];
+        if (typeof (field) === "function") {
+            return (...args: any) => {
+                // inject model "this"
+                field.call(this.object, ...args);
+            };
+        }
+        return field;
     }
 
     setValue(value: any) {
