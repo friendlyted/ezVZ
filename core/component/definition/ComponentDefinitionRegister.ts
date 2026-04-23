@@ -26,8 +26,11 @@ export class ComponentDefinitionRegister {
         this.components.set(modelName, componentDefinition);
     }
 
-    getComponent(model: ComponentModel): ComponentDefinition {
-        return this.components.get(model?.modelName?.());
+    getComponent(value: ComponentModel | string): ComponentDefinition {
+        if (typeof (value) === "string") {
+            return this.components.get(value);
+        }
+        return this.components.get(value?.modelName?.());
     }
 
     private static parseSvg(content: string) {
