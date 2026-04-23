@@ -17,8 +17,8 @@ export function main() {
     const menuComponent = COMPONENTS.getComponent(menu);
     const menuInstance = menuComponent.createInstance(bindings);
 
-    menuInstance.attachToContainer(
-        document.getElementById("menu")
-    );
+    let root = document.getElementById("menu");
+    root.innerHTML = "";
+    menuInstance.attachToContainer(root);
 
 }

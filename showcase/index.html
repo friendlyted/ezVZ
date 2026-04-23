@@ -4,18 +4,36 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>TypeScript</title>
     <style>
-        html, body, #app {
+        html, body, .app {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
+
+        .spinner {
+            width: 10px;
+            margin: 20px;
+            height: 10px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
 <h2>Menu test</h2>
-<div id="menu"></div>
+<div id="menu" class="app">
+    <div class="spinner"></div>
+</div>
 <script type="module">
     import {ezTsImport} from "../../ezTS/loader/front.js";
 
@@ -27,7 +45,7 @@
         ]
     }).then(async (modules) => {
         await Promise.all(modules.map(m => m.main()));
-        console.log("All modules were loaded");
+        console.log("All apps were loaded");
     });
 </script>
 </body>
