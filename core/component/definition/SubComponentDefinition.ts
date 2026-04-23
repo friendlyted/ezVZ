@@ -39,7 +39,8 @@ export class SubComponentDefinition {
                 throw new Error(`Cannot found a component for name ${modelName}`);
             }
 
-            const subInstance = componentDefinition.createInstance(data);
+            let subBinding = ObjectBindings.allFields(data);
+            const subInstance = componentDefinition.createInstance(subBinding);
             subInstance.replaceElement(targetNode);
             return [subInstance];
         }
