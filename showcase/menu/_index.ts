@@ -12,8 +12,7 @@ export function main() {
         reactiveObject(new MenuItemModel("item2")),
     )
 
-    const reactiveModel = reactiveObject(menu);
-    const bindings = ObjectBindings.allFields(reactiveModel);
+    const bindings = ObjectBindings.allFields(menu);
     const menuComponent = COMPONENTS.getComponent(menu);
     const menuInstance = menuComponent.createInstance(bindings);
 
