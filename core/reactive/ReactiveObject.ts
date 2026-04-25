@@ -17,5 +17,7 @@ export interface ReactiveObject<T> {
 
     $__isManaged(): boolean;
 
-    $__triggerUpdate(attributeName: keyof T): void;
+    $__triggerUpdate(attributeName: keyof T): void
+
+    $__unwrap(): T;
 }

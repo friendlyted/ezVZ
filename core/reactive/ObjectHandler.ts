@@ -61,6 +61,8 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
                 return this.isManaged(target);
             case "$__triggerUpdate":
                 return this.triggerUpdate(target);
+            case "$__unwrap":
+                return () => target;
             default:
                 return target?.[key];
         }
