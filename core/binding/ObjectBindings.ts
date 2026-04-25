@@ -10,8 +10,12 @@ export class ObjectBindings<T extends ReactiveObject<T>> {
         );
     }
 
+    public has(name: string): boolean {
+        return this.bindings.has(name);
+    }
+
     public get(name: string): FieldBinding {
-        if (!this.bindings.has(name)) {
+        if (!this.has(name)) {
             throw new Error(`There is no bindings for name '${name}'`)
         }
         return this.bindings.get(name);
