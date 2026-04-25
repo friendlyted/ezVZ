@@ -103,12 +103,7 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
     merge(target: T) {
         return (other: T) => {
             if (!other) other = {} as T;
-            const otherKeys = [
-                ...Object.getOwnPropertyNames(other),
-                ...Object.getOwnPropertySymbols(other),
-                ...Object.getOwnPropertyNames(Object.getPrototypeOf(other)),
-                ...Object.getOwnPropertySymbols(Object.getPrototypeOf(other))
-            ];
+            const otherKeys = ObjectHandler.gatherKeys(other);
             for (const key of otherKeys) {
                 let value1 = target[key];
                 let value2 = other[key];
@@ -140,6 +135,15 @@ export class ObjectHandler<T extends object> implements ProxyHandler<T> {
                     delete target[key];
                 });
         }
+    }
+
+    private static gatherKeys(obj: any): any[] {
+        if (obj === Object.prototype) return [];
+        return [
+            ...Object.getOwnPropertyNames(obj),
+            ...Object.getOwnPropertySymbols(obj),
+            ...this.gatherKeys(Object.getPrototypeOf(obj))
+        ] as any[];
     }
 
     isManaged(target: T) {

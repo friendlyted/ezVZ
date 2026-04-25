@@ -3,7 +3,6 @@ import {COMPONENTS} from "./Components.ts";
 import {MenuItemModel} from "./MenuItem.ts";
 import {reactiveArray} from "../../core/reactive/ArrayHandler.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
-import {reactiveObject} from "../../core/reactive/ObjectHandler.ts";
 
 const TEMPLATE = `
     <ul class="menu" ftd:list_data="items" />
@@ -17,13 +16,8 @@ export class MenuModel extends ComponentModel {
     public constructor(
         public readonly items: MenuItemModel[] = reactiveArray([]),
     ) {
-        super();
+        super(MenuModel.NAME);
     }
-
-    modelName(): string {
-        return MenuModel.NAME;
-    }
-
 }
 
 COMPONENTS.register({

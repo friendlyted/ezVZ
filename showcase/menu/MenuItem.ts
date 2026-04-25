@@ -14,11 +14,7 @@ export class MenuItemModel extends ComponentModel {
     public constructor(
         public readonly name: String
     ) {
-        super();
-    }
-
-    modelName(): string {
-        return MenuItemModel.NAME;
+        super(MenuItemModel.NAME);
     }
 }
 

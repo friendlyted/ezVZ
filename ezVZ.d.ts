@@ -159,7 +159,9 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/instance/Compo
 declare module "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentModel.ts" {
     import { ReactiveObject } from "https://friendlyted.github.io/ezVZ/core/reactive/ReactiveObject.ts";
     export abstract class ComponentModel {
-        abstract modelName(): string;
+        private readonly _modelName;
+        protected constructor(_modelName: string);
+        modelName(): string;
         reactive(): this & ReactiveObject<this>;
     }
 }
