@@ -2,31 +2,50 @@ import {ComponentDefinition} from "./ComponentDefinition.ts";
 import {ComponentModel} from "./ComponentModel.ts";
 import {TemplateAnalyzer} from "../../parser/TemplateAnalyzer.ts";
 import {TemplateAnalyzeResult} from "../../parser/TemplateAnalyzeResult.ts";
+import {ObjectBindings} from "../../binding/ObjectBindings.ts";
+
+export interface ComponentDefinitionRegisterEntry {
+    definition: ComponentDefinition,
+
+    bindingProvider(data: any): ObjectBindings<any>
+}
+
+export interface ComponentDefinitionRegisterInput {
+    modelName: string;
+    template: string;
+    svg?: boolean;
+
+    bindingProvider?(data: any): ObjectBindings<any>;
+}
 
 export class ComponentDefinitionRegister {
-    private components: Map<string, ComponentDefinition> = new Map<string, ComponentDefinition>();
+    private components = new Map<string, ComponentDefinitionRegisterEntry>();
     private readonly analyzer: TemplateAnalyzer;
 
     constructor() {
         this.analyzer = new TemplateAnalyzer(this);
     }
 
-    register(modelName: string, template: string, svg: boolean = false) {
+    register(entry: ComponentDefinitionRegisterInput) {
         let templateRoot: Element;
-        if (svg) {
-            templateRoot = ComponentDefinitionRegister.parseSvg(template);
+        if (entry.svg) {
+            templateRoot = ComponentDefinitionRegister.parseSvg(entry.template);
         } else {
-            templateRoot = ComponentDefinitionRegister.parseTemplate(template);
+            templateRoot = ComponentDefinitionRegister.parseTemplate(entry.template);
         }
         const templateInfo: TemplateAnalyzeResult = this.analyzer.analyzeNode(templateRoot);
         const componentDefinition = new ComponentDefinition(
             templateRoot,
             templateInfo
         );
-        this.components.set(modelName, componentDefinition);
+
+        this.components.set(entry.modelName, {
+            definition: componentDefinition,
+            bindingProvider: entry.bindingProvider || ObjectBindings.allFields
+        });
     }
 
-    getComponent(value: ComponentModel | string): ComponentDefinition {
+    getComponent(value: ComponentModel | string): ComponentDefinitionRegisterEntry {
         if (typeof (value) === "string") {
             return this.components.get(value);
         }

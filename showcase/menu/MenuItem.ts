@@ -1,6 +1,8 @@
 import {ComponentModel} from "../../core/component/definition/ComponentModel.ts";
 import {COMPONENTS} from "./Components.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
+import {ObjectBindings} from "../../core/binding/ObjectBindings.ts";
+import {MenuModel} from "./Menu.ts";
 
 const TEMPLATE = `
     <li class="menu_item">{{name}}</li>
@@ -21,4 +23,7 @@ export class MenuItemModel implements ComponentModel {
     }
 }
 
-COMPONENTS.register(MenuItemModel.NAME, TEMPLATE)
+COMPONENTS.register({
+    modelName: MenuItemModel.NAME,
+    template: TEMPLATE
+})

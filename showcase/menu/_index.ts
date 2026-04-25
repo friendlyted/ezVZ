@@ -12,9 +12,10 @@ export function main() {
         reactiveObject(new MenuItemModel("item2")),
     )
 
-    const bindings = ObjectBindings.allFields(menu);
-    const menuComponent = COMPONENTS.getComponent(menu);
-    const menuInstance = menuComponent.createInstance(bindings);
+    const menuComponentData = COMPONENTS.getComponent(menu);
+
+    const bindings = menuComponentData.bindingProvider(menu);
+    const menuInstance = menuComponentData.definition.createInstance(bindings);
 
     let root = document.getElementById("menu");
     root.innerHTML = "";

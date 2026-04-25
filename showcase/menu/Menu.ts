@@ -3,6 +3,7 @@ import {COMPONENTS} from "./Components.ts";
 import {MenuItemModel} from "./MenuItem.ts";
 import {ArrayHandler} from "../../core/reactive/ArrayHandler.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
+import {ObjectBindings} from "../../core/binding/ObjectBindings.ts";
 
 const TEMPLATE = `
     <ul class="menu" ftd:list_data="items" />
@@ -23,4 +24,7 @@ export class MenuModel implements ComponentModel {
     }
 }
 
-COMPONENTS.register(MenuModel.NAME, TEMPLATE)
+COMPONENTS.register({
+    modelName: MenuModel.NAME,
+    template: TEMPLATE
+})

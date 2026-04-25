@@ -34,13 +34,13 @@ export class SubComponentDefinition {
                 return [];
             }
 
-            const componentDefinition = this.componentRegister.getComponent(modelName) || null;
-            if (componentDefinition === null) {
+            const componentDefinitionInfo = this.componentRegister.getComponent(modelName) || null;
+            if (componentDefinitionInfo === null) {
                 throw new Error(`Cannot found a component for name ${modelName}`);
             }
 
-            let subBinding = ObjectBindings.allFields(data);
-            const subInstance = componentDefinition.createInstance(subBinding);
+            let subBinding = componentDefinitionInfo.bindingProvider(data);
+            const subInstance = componentDefinitionInfo.definition.createInstance(subBinding);
             subInstance.replaceElement(targetNode);
             return [subInstance];
         }
@@ -61,9 +61,10 @@ export class SubComponentDefinition {
     }
 
     createListElement(data: any, container: ParentNode): ComponentInstance {
-        const instance = this.componentRegister
-            .getComponent(data as ComponentModel)
-            .createInstance(ObjectBindings.allFields(data));
+        const componentInfo = this.componentRegister
+            .getComponent(data as ComponentModel);
+        const binding = componentInfo.bindingProvider(data);
+        const instance = componentInfo.definition.createInstance(binding);
         instance.attachToContainer(container);
         return instance;
     }
