@@ -1,1 +1,1 @@
-import {} from "../../ezTS/loader/web-worker.js";
+import {} from "https://friendlyted.github.io/ezTS/loader/web-worker.js";
