@@ -40,12 +40,11 @@
     ezTsImport({
         webWorker: "./web-worker.js",
         serviceWorker: "./service-worker.js",
-        entryPointFiles: [
+        modules: [
             "./menu/_index.ts"
         ]
-    }).then(async (modules) => {
-        await Promise.all(modules.map(m => m.main()));
-        console.log("All apps were loaded");
+    }).then(([index]) => {
+        index.main();
     });
 </script>
 </body>
