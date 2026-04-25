@@ -16,6 +16,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/reactive/ReactiveObject.
         $__hash(): number;
         $__isManaged(): boolean;
         $__triggerUpdate(attributeName: keyof T): void;
+        $__unwrap(): T;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/binding/FieldBinding.ts" {
@@ -189,12 +190,24 @@ declare module "https://friendlyted.github.io/ezVZ/core/parser/TemplateAnalyzer.
 declare module "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentDefinitionRegister.ts" {
     import { ComponentDefinition } from "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentDefinition.ts";
     import { ComponentModel } from "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentModel.ts";
+    import { ObjectBindings } from "https://friendlyted.github.io/ezVZ/core/binding/ObjectBindings.ts";
+    export interface ComponentDefinitionRegisterEntry {
+        definition: ComponentDefinition,
+        bindingProvider(data: any): ObjectBindings<any>
+    }
+
+    export interface ComponentDefinitionRegisterInput {
+        modelName: string;
+        template: string;
+        svg?: boolean;
+        bindingProvider?(data: any): ObjectBindings<any>;
+    }
     export class ComponentDefinitionRegister {
         private components;
         private readonly analyzer;
         constructor();
-        register(modelName: string, template: string, svg?: boolean): void;
-        getComponent(value: ComponentModel | string): ComponentDefinition;
+        register(input: ComponentDefinitionRegisterInput): void;
+        getComponent(value: ComponentModel | string): ComponentDefinitionRegisterEntry;
         private static parseSvg;
         private static parseTemplate;
     }
