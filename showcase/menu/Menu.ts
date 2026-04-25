@@ -11,21 +11,19 @@ const TEMPLATE = `
 
 export type ReactiveMenuModel = MenuModel & ReactiveObject<MenuModel>;
 
-export class MenuModel implements ComponentModel {
+export class MenuModel extends ComponentModel {
     public static NAME = "menu";
 
     public constructor(
         public readonly items: MenuItemModel[] = reactiveArray([]),
     ) {
+        super();
     }
 
     modelName(): string {
         return MenuModel.NAME;
     }
 
-    reactive() {
-        return reactiveObject(this);
-    }
 }
 
 COMPONENTS.register({

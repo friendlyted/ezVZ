@@ -1,9 +1,6 @@
 import {ComponentModel} from "../../core/component/definition/ComponentModel.ts";
 import {COMPONENTS} from "./Components.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
-import {ObjectBindings} from "../../core/binding/ObjectBindings.ts";
-import {MenuModel} from "./Menu.ts";
-import {reactiveObject} from "../../core/reactive/ObjectHandler.ts";
 
 const TEMPLATE = `
     <li class="menu_item">{{name}}</li>
@@ -11,20 +8,17 @@ const TEMPLATE = `
 
 export type RichMenuItemModel = MenuItemModel & ReactiveObject<MenuItemModel>;
 
-export class MenuItemModel implements ComponentModel {
+export class MenuItemModel extends ComponentModel {
     public static NAME = "menuItem";
 
     public constructor(
         public readonly name: String
     ) {
+        super();
     }
 
     modelName(): string {
         return MenuItemModel.NAME;
-    }
-
-    reactive() {
-        return reactiveObject(this);
     }
 }
 
