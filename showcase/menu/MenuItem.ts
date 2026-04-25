@@ -3,6 +3,7 @@ import {COMPONENTS} from "./Components.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
 import {ObjectBindings} from "../../core/binding/ObjectBindings.ts";
 import {MenuModel} from "./Menu.ts";
+import {reactiveObject} from "../../core/reactive/ObjectHandler.ts";
 
 const TEMPLATE = `
     <li class="menu_item">{{name}}</li>
@@ -20,6 +21,10 @@ export class MenuItemModel implements ComponentModel {
 
     modelName(): string {
         return MenuItemModel.NAME;
+    }
+
+    reactive() {
+        return reactiveObject(this);
     }
 }
 

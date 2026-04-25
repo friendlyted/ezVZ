@@ -157,8 +157,10 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/instance/Compo
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentModel.ts" {
+    import { ReactiveObject } from "https://friendlyted.github.io/ezVZ/core/reactive/ReactiveObject.ts";
     export interface ComponentModel {
         modelName(): string;
+        reactive(): this & ReactiveObject<this>;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/parser/VariableParser.ts" {
