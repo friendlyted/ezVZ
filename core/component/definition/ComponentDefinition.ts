@@ -23,7 +23,7 @@ export class ComponentDefinition {
         this.cleanupAttributes(this.templateRoot);
         const elements = Array.from(this.templateRoot.querySelectorAll("*"));
         for (const el of elements) {
-            if(el.localName === ("ftd")){
+            if (el.localName === ("ftd")) {
                 el.remove();
             } else {
                 this.cleanupAttributes(el);
@@ -55,7 +55,14 @@ export class ComponentDefinition {
         const backRefs = this.templateInfo.backrefs
             .map(it => it.createInstance(instanceRoot, bindings));
 
-        return new ComponentInstance(instanceRoot, ...updaters, ...inputs, ...subs, ...backRefs, ...resources);
+        let componentInstance = new ComponentInstance(instanceRoot, ...updaters, ...inputs, ...subs, ...backRefs, ...resources);
+
+        const afterBindingTo = bindings.get("afterBindingTo").getValue();
+        if (typeof (afterBindingTo) === "function") {
+            afterBindingTo(componentInstance);
+        }
+
+        return componentInstance;
     }
 
 }
