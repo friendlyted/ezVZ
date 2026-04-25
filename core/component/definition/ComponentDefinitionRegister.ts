@@ -1,8 +1,9 @@
 import {ComponentDefinition} from "./ComponentDefinition.ts";
-import {ComponentModel} from "./ComponentModel.ts";
 import {TemplateAnalyzer} from "../../parser/TemplateAnalyzer.ts";
 import {TemplateAnalyzeResult} from "../../parser/TemplateAnalyzeResult.ts";
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
+import {ComponentInstance} from "../instance/ComponentInstance.ts";
+import {ComponentModel} from "./ComponentModel.ts";
 
 export interface ComponentDefinitionRegisterEntry {
     definition: ComponentDefinition,
@@ -45,11 +46,14 @@ export class ComponentDefinitionRegister {
         });
     }
 
-    getComponent(value: ComponentModel | string): ComponentDefinitionRegisterEntry {
-        if (typeof (value) === "string") {
-            return this.components.get(value);
-        }
-        return this.components.get(value?.modelName?.());
+    createComponent(data: ComponentModel): ComponentInstance {
+        const entry = this.components.get(data.modelName());
+        const binding = entry.bindingProvider(data);
+        return entry.definition.createInstance(binding);
+    }
+
+    getComponent(value: string): ComponentDefinitionRegisterEntry {
+        return this.components.get(value);
     }
 
     private static parseSvg(content: string) {

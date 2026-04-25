@@ -7,15 +7,12 @@ import {reactiveObject} from "../../core/reactive/ObjectHandler.ts";
 export function main() {
     const menu = reactiveObject(new MenuModel());
 
+    const menuInstance = COMPONENTS.createComponent(menu);
+
     menu.items.push(
         reactiveObject(new MenuItemModel("item1")),
         reactiveObject(new MenuItemModel("item2")),
     )
-
-    const menuComponentData = COMPONENTS.getComponent(menu);
-
-    const bindings = menuComponentData.bindingProvider(menu);
-    const menuInstance = menuComponentData.definition.createInstance(bindings);
 
     let root = document.getElementById("menu");
     root.innerHTML = "";

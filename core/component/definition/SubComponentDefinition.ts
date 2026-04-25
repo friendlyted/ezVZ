@@ -1,7 +1,6 @@
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
 import {ComponentInstance} from "../instance/ComponentInstance.ts";
 import {ComponentDefinitionRegister} from "./ComponentDefinitionRegister.ts";
-import {ComponentModel} from "./ComponentModel.ts";
 
 
 export class SubComponentDefinition {
@@ -34,13 +33,7 @@ export class SubComponentDefinition {
                 return [];
             }
 
-            const componentDefinitionInfo = this.componentRegister.getComponent(modelName) || null;
-            if (componentDefinitionInfo === null) {
-                throw new Error(`Cannot found a component for name ${modelName}`);
-            }
-
-            let subBinding = componentDefinitionInfo.bindingProvider(data);
-            const subInstance = componentDefinitionInfo.definition.createInstance(subBinding);
+            const subInstance = this.componentRegister.createComponent(data);
             subInstance.replaceElement(targetNode);
             return [subInstance];
         }
@@ -61,10 +54,7 @@ export class SubComponentDefinition {
     }
 
     createListElement(data: any, container: ParentNode): ComponentInstance {
-        const componentInfo = this.componentRegister
-            .getComponent(data as ComponentModel);
-        const binding = componentInfo.bindingProvider(data);
-        const instance = componentInfo.definition.createInstance(binding);
+        const instance = this.componentRegister.createComponent(data);
         instance.attachToContainer(container);
         return instance;
     }

@@ -191,6 +191,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Com
     import { ComponentDefinition } from "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentDefinition.ts";
     import { ComponentModel } from "https://friendlyted.github.io/ezVZ/core/component/definition/ComponentModel.ts";
     import { ObjectBindings } from "https://friendlyted.github.io/ezVZ/core/binding/ObjectBindings.ts";
+    import { ComponentInstance } from "https://friendlyted.github.io/ezVZ/core/component/instance/ComponentInstance.ts";
     export interface ComponentDefinitionRegisterEntry {
         definition: ComponentDefinition,
         bindingProvider(data: any): ObjectBindings<any>
@@ -207,6 +208,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Com
         private readonly analyzer;
         constructor();
         register(input: ComponentDefinitionRegisterInput): void;
+        createComponent(data: ComponentModel): ComponentInstance;
         getComponent(value: ComponentModel | string): ComponentDefinitionRegisterEntry;
         private static parseSvg;
         private static parseTemplate;
