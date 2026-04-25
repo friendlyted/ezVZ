@@ -56,13 +56,14 @@ export class ComponentDefinitionRegister {
         return this.components.get(value);
     }
 
-    private static parseSvg(content: string) {
+    private static parseSvg(content: string): Element {
         const doc = new DOMParser().parseFromString(content, "image/svg+xml");
         return doc.firstElementChild;
     }
 
-    private static parseTemplate(content: string) {
-        const doc = new DOMParser().parseFromString(content, "text/html");
-        return doc.body.firstElementChild;
+    private static parseTemplate(content: string): Element {
+        const doc = new DOMParser().parseFromString(`<template>${content}</template>`, "text/html");
+        const template = doc.querySelector("template");
+        return template.content.firstElementChild;
     }
 }
