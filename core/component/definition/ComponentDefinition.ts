@@ -57,9 +57,12 @@ export class ComponentDefinition {
 
         let componentInstance = new ComponentInstance(instanceRoot, ...updaters, ...inputs, ...subs, ...backRefs, ...resources);
 
-        const afterBindingTo = bindings.get("afterBindingTo").getValue();
-        if (typeof (afterBindingTo) === "function") {
-            afterBindingTo(componentInstance);
+
+        if (bindings.has("afterBindingTo")) {
+            const afterBindingTo = bindings.get("afterBindingTo").getValue();
+            if (typeof (afterBindingTo) === "function") {
+                afterBindingTo(componentInstance);
+            }
         }
 
         return componentInstance;
