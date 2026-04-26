@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "lib": ["ES2024", "dom"],
+    "target": "ES2020"
+  }
+}
