@@ -27,4 +27,8 @@ export function main() {
         menu.items.splice(2, 1)
     }, 2000)
 
+    setTimeout(()=>{
+        const item5 = new MenuItemModel("item5");
+        menu.items.splice(1, 0, item5);
+    }, 4000)
 }

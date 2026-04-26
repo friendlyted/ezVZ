@@ -9,9 +9,14 @@ export class ComponentInstance implements Destroyable {
         this.dependencies = dependencies;
     }
 
-    attachToContainer(domContainer: ParentNode) {
+    attachToContainer(domContainer: ParentNode, index: number = -1) {
         this.detach();
-        domContainer.append(this.rootElement);
+        const targetChild = domContainer.children.item(index);
+        if (targetChild === null) {
+            domContainer.append(this.rootElement);
+        } else {
+            targetChild.before(this.rootElement);
+        }
     }
 
     replaceElement(element: Element) {

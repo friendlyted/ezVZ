@@ -50,7 +50,7 @@ export class ComponentDefinition {
             .map(it => it.createInstance(instanceRoot, bindings));
 
         const subs = this.templateInfo.nodeSubs
-            .flatMap(it => it.createInstance(instanceRoot, bindings));
+            .map(it => it.createInstance(instanceRoot, bindings));
 
         const backRefs = this.templateInfo.backrefs
             .map(it => it.createInstance(instanceRoot, bindings));

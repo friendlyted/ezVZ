@@ -1,6 +1,7 @@
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
 import {ComponentInstance} from "../instance/ComponentInstance.ts";
 import {ComponentDefinitionRegister} from "./ComponentDefinitionRegister.ts";
+import {Destroyable} from "../instance/Destroyable.ts";
 
 
 export class SubComponentDefinition {
@@ -14,10 +15,20 @@ export class SubComponentDefinition {
         this.componentRegister = componentRegister;
     }
 
-    createInstance(instanceRoot: Element, bindings: ObjectBindings): ComponentInstance[] {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings): Destroyable {
+        const dependencies: Destroyable[] = [];
+        const result: Destroyable = {
+            destroy() {
+                dependencies.forEach(d => d.destroy());
+            }
+        };
+
         const data = bindings.get(this.bindingName)?.getValue?.() || null;
         if (data === null) {
             throw new Error("SubComponent requires ComponentModel in a 'data' attribute")
+        }
+        if (!data.$__isManaged?.()) {
+            throw new Error("SubComponent requires reactive model");
         }
 
         let targetNode: Element = instanceRoot;
@@ -30,36 +41,40 @@ export class SubComponentDefinition {
             let modelName = data?.modelName?.();
             if (typeof (modelName) === "undefined") {
                 console.error("Skipping SubComponent rendering due to data is not a ComponentModel type");
-                return [];
+                return result;
             }
 
             const subInstance = this.componentRegister.createComponent(data);
+            dependencies.push(subInstance);
+
             subInstance.replaceElement(targetNode);
-            return [subInstance];
+            return result;
         }
 
-        if (typeof data?.$__addInsertListener === "function") {
-            const fragment = new DocumentFragment();
-            const instances = data.map((value: any) => this.createListElement(value, fragment));
-            targetNode.append(fragment);
 
-            data.$__addInsertListener((index: number, value: any) => {
-                this.createListElement(value, targetNode);
-            });
+        const fragment = new DocumentFragment();
+        const instances = data.map((value: any) => this.createListElement(value, fragment));
+        dependencies.push(...instances);
 
-            data.$__addDeleteListener((index: number)=>{
-                targetNode.children.item(index).remove();
-            });
+        targetNode.append(fragment);
 
-            return instances;
-        }
+        data.$__addInsertListener((index: number, value: any) => {
+            const newInstance = this.createListElement(value, targetNode, index);
+            dependencies.splice(index, 0, newInstance);
+        });
 
-        return data.map((it: any) => this.createListElement(it, targetNode));
+        data.$__addDeleteListener((index: number) => {
+            targetNode.children.item(index).remove();
+            dependencies.splice(index, 1)
+                .forEach(i => i.destroy());
+        });
+
+        return result;
     }
 
-    createListElement(data: any, container: ParentNode): ComponentInstance {
+    createListElement(data: any, container: ParentNode, index: number = -1): ComponentInstance {
         const instance = this.componentRegister.createComponent(data);
-        instance.attachToContainer(container);
+        instance.attachToContainer(container, index);
         return instance;
     }
 }
