@@ -38,13 +38,14 @@ declare module "https://friendlyted.github.io/ezVZ/core/binding/FieldBinding.ts"
 declare module "https://friendlyted.github.io/ezVZ/core/binding/ObjectBindings.ts" {
     import { FieldBinding } from "https://friendlyted.github.io/ezVZ/core/binding/FieldBinding.ts";
     import { ReactiveObject } from "https://friendlyted.github.io/ezVZ/core/reactive/ReactiveObject.ts";
-    export class ObjectBindings<T extends ReactiveObject<T>> {
+    export class ObjectBindings {
         bindings: Map<string, FieldBinding>;
         private constructor();
         get(name: string): FieldBinding;
-        static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings<T>;
-        static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings<T>;
-        static custom<T extends ReactiveObject<T>>(data: T, ...bindingProviders: (readonly [keyof T, (data: T, F: keyof T) => FieldBinding])[]): ObjectBindings<T>;
+        add(name: string, binding: FieldBinding): void;
+        static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings;
+        static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings;
+        static custom<T>(data: T, ...bindingProviders: (readonly [string, (data: T, field: string) => FieldBinding])[]): ObjectBindings;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/instance/BackRefInstance.ts" {
@@ -66,29 +67,29 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Bac
         private readonly nodePath;
         private readonly bindingName;
         constructor(nodePath: number[], bindingName: string);
-        createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): BackRefInstance;
+        createInstance(instanceRoot: Element, bindings: ObjectBindings): BackRefInstance;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/TextChunk.ts" {
     import { ObjectBindings } from "https://friendlyted.github.io/ezVZ/core/binding/ObjectBindings.ts";
     export interface TextChunk {
-        getValue(bindings: ObjectBindings<never>): string;
+        getValue(bindings: ObjectBindings): string;
     }
     export class ConstTextChunk implements TextChunk {
         private readonly value;
         constructor(value: string);
-        getValue(bindings: ObjectBindings<never>): string;
+        getValue(bindings: ObjectBindings): string;
     }
     export class VariableTextChunk implements TextChunk {
         private readonly varName;
         constructor(varName: string);
-        getValue(bindings: ObjectBindings<never>): string;
+        getValue(bindings: ObjectBindings): string;
     }
     export class FunctionTextChunk implements TextChunk {
         private readonly fnName;
         private readonly fnParams;
         constructor(fnName: string, fnParams: string[]);
-        getValue(bindings: ObjectBindings<never>): string;
+        getValue(bindings: ObjectBindings): string;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/instance/NodeUpdaterInstance.ts" {
@@ -101,7 +102,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/instance/NodeU
         private readonly textChunks;
         private readonly dependencies;
         private updateScheduled;
-        constructor(targetNode: Node, bindings: ObjectBindings<never>, textChunks: TextChunk[], triggeredBy: string[]);
+        constructor(targetNode: Node, bindings: ObjectBindings, textChunks: TextChunk[], triggeredBy: string[]);
         private update;
         scheduleUpdate(): void;
         private scheduleUpdateWithMicros;
@@ -119,7 +120,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Nod
         private readonly attribute;
         private readonly triggeredBy;
         constructor(nodePath: number[], textChunks: TextChunk[], triggeredBy: string[], attribute?: string);
-        createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): NodeUpdaterInstance;
+        createInstance(instanceRoot: Element, bindings: ObjectBindings): NodeUpdaterInstance;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/instance/InputInstance.ts" {
@@ -141,7 +142,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Inp
         private readonly eventType;
         private readonly bindingName;
         constructor(nodePath: number[], eventType: string, bindingName: string);
-        createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): InputInstance;
+        createInstance(instanceRoot: Element, bindings: ObjectBindings): InputInstance;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/instance/ComponentInstance.ts" {
@@ -198,14 +199,14 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Com
     import { ComponentInstance } from "https://friendlyted.github.io/ezVZ/core/component/instance/ComponentInstance.ts";
     export interface ComponentDefinitionRegisterEntry {
         definition: ComponentDefinition,
-        bindingProvider(data: any): ObjectBindings<any>
+        bindingProvider(data: any): ObjectBindings
     }
 
     export interface ComponentDefinitionRegisterInput {
         modelName: string;
         template: string;
         svg?: boolean;
-        bindingProvider?(data: any): ObjectBindings<any>;
+        bindingProvider?(data: any): ObjectBindings;
     }
     export class ComponentDefinitionRegister {
         private components;
@@ -227,7 +228,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Sub
         private readonly bindingName;
         private readonly componentRegister;
         constructor(nodePath: number[], bindingName: string, componentRegister: ComponentDefinitionRegister);
-        createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): ComponentInstance[];
+        createInstance(instanceRoot: Element, bindings: ObjectBindings): ComponentInstance[];
         createListElement(data: any, container: ParentNode): ComponentInstance;
     }
 }
@@ -255,7 +256,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/component/definition/Com
         constructor(templateRoot: Element, templateInfo: TemplateAnalyzeResult);
         private cleanupFtdData;
         private cleanupAttributes;
-        createInstance<T extends ReactiveObject<T>>(bindings: ObjectBindings<T>, resources?: Destroyable[]): ComponentInstance;
+        createInstance<T extends ReactiveObject<T>>(bindings: ObjectBindings, resources?: Destroyable[]): ComponentInstance;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/reactive/Utils.ts" {

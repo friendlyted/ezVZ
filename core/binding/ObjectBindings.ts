@@ -21,6 +21,10 @@ export class ObjectBindings {
         return this.bindings.get(name);
     }
 
+    public add(name: string, binding: FieldBinding) {
+        this.bindings.set(name, binding);
+    }
+
     static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings {
         const bindings = keys.map(key =>
             [String(key), FieldBinding.create<T>(data, key)] as const
@@ -35,9 +39,9 @@ export class ObjectBindings {
         return new ObjectBindings(...bindings);
     }
 
-    static custom<T extends ReactiveObject<T>>(
+    static custom<T>(
         data: T,
-        ...bindingProviders: (readonly [keyof T, (data: T, F: keyof T) => FieldBinding])[]
+        ...bindingProviders: (readonly [string, (data: T, field: string) => FieldBinding])[]
     ): ObjectBindings {
         const bindings = bindingProviders.map(([key, bindingProvider]) =>
             [String(key), bindingProvider.apply(data, key)] as const
