@@ -47,6 +47,10 @@ export class SubComponentDefinition {
                 this.createListElement(value, targetNode);
             });
 
+            data.$__addDeleteListener((index: number)=>{
+                targetNode.children.item(index).remove();
+            });
+
             return instances;
         }
 
