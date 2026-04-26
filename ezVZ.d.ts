@@ -45,7 +45,7 @@ declare module "https://friendlyted.github.io/ezVZ/core/binding/ObjectBindings.t
         add(name: string, binding: FieldBinding): void;
         static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings;
         static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings;
-        static custom<T>(data: T, ...bindingProviders: (readonly [string, (data: T, field: string) => FieldBinding])[]): ObjectBindings;
+        static custom<T>(...values: (readonly [string, FieldBinding])[]): ObjectBindings;
     }
 }
 declare module "https://friendlyted.github.io/ezVZ/core/component/instance/BackRefInstance.ts" {

@@ -39,13 +39,7 @@ export class ObjectBindings {
         return new ObjectBindings(...bindings);
     }
 
-    static custom<T>(
-        data: T,
-        ...bindingProviders: (readonly [string, (data: T, field: string) => FieldBinding])[]
-    ): ObjectBindings {
-        const bindings = bindingProviders.map(([key, bindingProvider]) =>
-            [String(key), bindingProvider.apply(data, key)] as const
-        );
-        return new ObjectBindings(...bindings);
+    static custom<T>(...values: (readonly [string, FieldBinding])[]): ObjectBindings {
+        return new ObjectBindings(...values);
     }
 }
