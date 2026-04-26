@@ -62,8 +62,8 @@ export class ComponentDefinitionRegister {
     }
 
     private static parseTemplate(content: string): Element {
-        const doc = new DOMParser().parseFromString(`<template>${content}</template>`, "text/html");
-        const template = doc.querySelector("template");
+        const doc = new DOMParser().parseFromString(`<template id="$$parser$$">${content}</template>`, "text/html");
+        const template = doc.getElementById("$$parser$$") as HTMLTemplateElement;
         return template.content.firstElementChild;
     }
 }

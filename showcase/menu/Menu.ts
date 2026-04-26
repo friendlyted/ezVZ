@@ -5,7 +5,7 @@ import {reactiveArray} from "../../core/reactive/ArrayHandler.ts";
 import {ReactiveObject} from "../../core/reactive/ReactiveObject.ts";
 
 const TEMPLATE = `
-    <ul class="menu" ftd:list_data="items" />
+    <ul class="menu" ftd:list="items" />
 `;
 
 export type ReactiveMenuModel = MenuModel & ReactiveObject<MenuModel>;

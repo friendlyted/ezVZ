@@ -37,21 +37,18 @@ export class TemplateAnalyzer {
         const backrefs: BackRefDefinition[] = [];
         const result = {nodeUpdaters, nodeInputs, nodeSubs, backrefs};
 
-        if (element.localName === ("ftd:include")) {
-            let bindingName =
-                element.getAttribute("ftd:data") ||
-                element.getAttribute("data");
+        if (element.localName === ("template")) {
+            let bindingName = element.getAttribute("ftd:include");
 
-            if (bindingName == null) {
-                throw new Error("ftd sub component must have ftd:data attribute")
+            if (bindingName != null){
+                const sub = new SubComponentDefinition(
+                    currentPath,
+                    bindingName,
+                    this.componentRegister
+                );
+                nodeSubs.push(sub);
             }
 
-            const sub = new SubComponentDefinition(
-                currentPath,
-                bindingName,
-                this.componentRegister
-            );
-            nodeSubs.push(sub);
             return result;
         }
 
@@ -111,7 +108,7 @@ export class TemplateAnalyzer {
                 continue;
             }
 
-            if (ftdName === "list_data") {
+            if (ftdName === "list") {
                 let bindingName = attr.value;
                 const sub = new SubComponentDefinition(
                     currentPath,
