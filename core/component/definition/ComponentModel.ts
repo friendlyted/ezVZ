@@ -5,6 +5,7 @@ export abstract class ComponentModel {
     protected constructor(
         private readonly _modelName: string
     ) {
+        return this.reactive();
     }
 
     modelName() {
