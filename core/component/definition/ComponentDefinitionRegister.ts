@@ -8,7 +8,7 @@ import {ComponentModel} from "./ComponentModel.ts";
 export interface ComponentDefinitionRegisterEntry {
     definition: ComponentDefinition,
 
-    bindingProvider(data: any): ObjectBindings<any>
+    bindingProvider(data: any): ObjectBindings
 }
 
 export interface ComponentDefinitionRegisterInput {
@@ -16,7 +16,7 @@ export interface ComponentDefinitionRegisterInput {
     template: string;
     svg?: boolean;
 
-    bindingProvider?(data: any): ObjectBindings<any>;
+    bindingProvider?(data: any): ObjectBindings;
 }
 
 export class ComponentDefinitionRegister {

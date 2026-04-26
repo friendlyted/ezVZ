@@ -1,18 +1,17 @@
 import {Destroyable} from "./Destroyable.ts";
 import {ObjectBindings} from "../../binding/ObjectBindings.ts";
-import {ReactiveObject} from "../../reactive/ReactiveObject.ts";
 import {TextChunk} from "../TextChunk.ts";
 
 export class NodeUpdaterInstance implements Destroyable {
     private readonly targetNode: Node;
-    private readonly binding: ObjectBindings<never>;
+    private readonly binding: ObjectBindings;
     private readonly textChunks: TextChunk[];
     private readonly dependencies: Destroyable[] = [];
     // Если в одном текстовом куске изменились "одновременно" несколько переменных,
     // не надо планировать обновление несколько раз
     private updateScheduled = false;
 
-    public constructor(targetNode: Node, bindings: ObjectBindings<never>, textChunks: TextChunk[], triggeredBy: string[]) {
+    public constructor(targetNode: Node, bindings: ObjectBindings, textChunks: TextChunk[], triggeredBy: string[]) {
         this.targetNode = targetNode;
         this.binding = bindings;
         this.textChunks = textChunks;

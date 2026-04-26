@@ -12,7 +12,7 @@ export class InputDefinition {
         this.bindingName = bindingName;
     }
 
-    createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): InputInstance {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings): InputInstance {
         let targetNode: Node = instanceRoot;
         for (let i = 0; i < this.nodePath.length; i++) {
             targetNode = targetNode.childNodes.item(this.nodePath[i]);

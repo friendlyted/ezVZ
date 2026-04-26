@@ -13,7 +13,7 @@ export class BackRefDefinition {
         this.bindingName = bindingName;
     }
 
-    createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): BackRefInstance {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings): BackRefInstance {
         let targetNode: Element = instanceRoot;
         for (let i = 0; i < this.nodePath.length; i++) {
             targetNode = targetNode.childNodes.item(this.nodePath[i]) as Element;

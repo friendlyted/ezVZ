@@ -15,7 +15,7 @@ export class NodeUpdaterDefinition {
         this.attribute = attribute;
     }
 
-    createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): NodeUpdaterInstance {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings): NodeUpdaterInstance {
         let targetNode: Node = instanceRoot;
         for (let i = 0; i < this.nodePath.length; i++) {
             targetNode = targetNode.childNodes.item(this.nodePath[i]);

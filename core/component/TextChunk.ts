@@ -1,7 +1,7 @@
 import {ObjectBindings} from "../binding/ObjectBindings.ts";
 
 export interface TextChunk {
-    getValue(bindings: ObjectBindings<never>): string;
+    getValue(bindings: ObjectBindings): string;
 }
 
 export class ConstTextChunk implements TextChunk {
@@ -11,7 +11,7 @@ export class ConstTextChunk implements TextChunk {
         this.value = value;
     }
 
-    getValue(bindings: ObjectBindings<never>): string {
+    getValue(bindings: ObjectBindings): string {
         return this.value;
     }
 }
@@ -23,7 +23,7 @@ export class VariableTextChunk implements TextChunk {
         this.varName = varName;
     }
 
-    getValue(bindings: ObjectBindings<never>): string {
+    getValue(bindings: ObjectBindings): string {
         return bindings.get(this.varName).getValue();
     }
 }
@@ -36,7 +36,7 @@ export class FunctionTextChunk implements TextChunk {
     ) {
     }
 
-    getValue(bindings: ObjectBindings<never>): string {
+    getValue(bindings: ObjectBindings): string {
         const fn = bindings.get(this.fnName).getValue();
         if (typeof fn !== "function") {
             throw Error("Binding '" + this.fnName + "' is not a function");

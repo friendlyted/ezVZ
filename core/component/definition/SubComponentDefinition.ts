@@ -14,7 +14,7 @@ export class SubComponentDefinition {
         this.componentRegister = componentRegister;
     }
 
-    createInstance(instanceRoot: Element, bindings: ObjectBindings<never>): ComponentInstance[] {
+    createInstance(instanceRoot: Element, bindings: ObjectBindings): ComponentInstance[] {
         const data = bindings.get(this.bindingName)?.getValue?.() || null;
         if (data === null) {
             throw new Error("SubComponent requires ComponentModel in a 'data' attribute")

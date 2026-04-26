@@ -40,7 +40,7 @@ export class ComponentDefinition {
         }
     }
 
-    createInstance<T extends ReactiveObject<T>>(bindings: ObjectBindings<T>, resources: Destroyable[] = []): ComponentInstance {
+    createInstance<T extends ReactiveObject<T>>(bindings: ObjectBindings, resources: Destroyable[] = []): ComponentInstance {
         const instanceRoot = this.templateRoot.cloneNode(true) as Element;
 
         const updaters = this.templateInfo.nodeUpdaters

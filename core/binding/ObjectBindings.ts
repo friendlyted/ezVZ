@@ -1,7 +1,7 @@
 import {FieldBinding} from "./FieldBinding.ts";
 import {ReactiveObject} from "../reactive/ReactiveObject.ts";
 
-export class ObjectBindings<T extends ReactiveObject<T>> {
+export class ObjectBindings {
     bindings: Map<string, FieldBinding> = new Map();
 
     private constructor(...values: (readonly [string, FieldBinding])[]) {
@@ -21,27 +21,27 @@ export class ObjectBindings<T extends ReactiveObject<T>> {
         return this.bindings.get(name);
     }
 
-    static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings<T> {
+    static selectedFields<T extends ReactiveObject<T>>(data: T, ...keys: (keyof T)[]): ObjectBindings {
         const bindings = keys.map(key =>
             [String(key), FieldBinding.create<T>(data, key)] as const
         );
-        return new ObjectBindings<T>(...bindings);
+        return new ObjectBindings(...bindings);
     }
 
-    static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings<T> {
+    static allFields<T extends ReactiveObject<T>>(data: T): ObjectBindings {
         const bindings = Object.keys(data).map(key =>
             [String(key), FieldBinding.create<T>(data, key as keyof T)] as const
         );
-        return new ObjectBindings<T>(...bindings);
+        return new ObjectBindings(...bindings);
     }
 
     static custom<T extends ReactiveObject<T>>(
         data: T,
         ...bindingProviders: (readonly [keyof T, (data: T, F: keyof T) => FieldBinding])[]
-    ): ObjectBindings<T> {
+    ): ObjectBindings {
         const bindings = bindingProviders.map(([key, bindingProvider]) =>
             [String(key), bindingProvider.apply(data, key)] as const
         );
-        return new ObjectBindings<T>(...bindings);
+        return new ObjectBindings(...bindings);
     }
 }
